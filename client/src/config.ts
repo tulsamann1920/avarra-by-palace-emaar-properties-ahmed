@@ -1,16 +1,16 @@
 export const CONFIG = {
-  prospectName: "Andrew",
+  prospectName: "Ahmed",
   developer: {
-    name: "Aldar Properties PJSC",
-    logo: "https://res.cloudinary.com/dshowga6n/image/upload/v1770994871/Company_Logo_1_lblclm.png",
-    favicon: "https://res.cloudinary.com/dshowga6n/image/upload/v1770994918/favicon_14_vpark3.png",
-    tagline: "Neon Tower",
-    brandColor: "0, 0%, 15%",
+    name: "Emaar Properties",
+    logo: "https://res.cloudinary.com/dshowga6n/image/upload/v1771696811/property-research/Emaar%20Properties%20-%20Avarra%20by%20Palace/developer-logo.png",
+    favicon: "",
+    tagline: "Avarra by Palace",
+    brandColor: "210, 15%, 25%",
   },
   project: {
-    headline: "Every Month, Your Rent Disappears.",
-    subHeadline: "Your Equity at Neon Tower Won't.",
-    description: "Calculate how much wealth you're losing to rent each year. See what active living at Dubailand could build for your future.",
+    headline: "Stop Paying Rent, Start Building Wealth",
+    subHeadline: "Discover how Avarra by Palace ownership builds your equity today",
+    description: "Calculate exactly how much wealth you're losing to rent versus building equity through ownership. Our calculator shows the true financial impact of continuing to rent versus investing in your future at Avarra by Palace. See how ownership in Dubai's prestigious Business Bay could transform your financial trajectory over the next decade.",
   },
   localization: {
     currency: "AED",
@@ -23,7 +23,7 @@ export const CONFIG = {
     rentInflation: 0.04,
     propertyAppreciation: 0.04,
   },
-  walkthroughVideoUrl: "https://youtu.be/xP__M-RlShw",
+  walkthroughVideoUrl: "",
   calendlyUrl: "https://calendly.com/thepropertylook-info/discovery-call",
   tpl: {
     logo: "https://res.cloudinary.com/dshowga6n/image/upload/v1770816146/1_o15miv.png",
@@ -65,8 +65,10 @@ export const CONFIG = {
     ],
   },
   data: [
-    { id: "1BR-Apartment", price: 1400000, beds: 1, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1770991101/Neon_Tower_gallery_image_22_m4o9up.webp", monthlyCharge: 1000, location: "Dubailand" },
-    { id: "2BR-Apartment", price: 2100000, beds: 2, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1770991101/Neon_Tower_gallery_image_23_qhrgdu.webp", monthlyCharge: 1500, location: "Dubailand" },
-    { id: "3BR-Apartment", price: 3200000, beds: 3, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1770991101/image_of_Neon_Tower_by_Aldar_Properties_PJSC__Duba_3_anhaai.webp", monthlyCharge: 2200, location: "Dubailand" }
-  ]
+    { id: "1BR-Apartment", price: 2839888, beds: 1, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1771696800/property-research/Emaar%20Properties%20-%20Avarra%20by%20Palace/photo-1.webp", monthlyCharge: 1011, location: "Avarra by Palace" },
+    { id: "2BR-Apartment", price: 4650602, beds: 2, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1771696801/property-research/Emaar%20Properties%20-%20Avarra%20by%20Palace/photo-2.webp", monthlyCharge: 1655, location: "Avarra by Palace" },
+    { id: "3BR-Apartment", price: 6125868, beds: 3, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1771696802/property-research/Emaar%20Properties%20-%20Avarra%20by%20Palace/photo-3.webp", monthlyCharge: 2180, location: "Avarra by Palace" },
+    { id: "4BR-Apartment", price: 15841552, beds: 4, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1771696803/property-research/Emaar%20Properties%20-%20Avarra%20by%20Palace/photo-4.webp", monthlyCharge: 5638, location: "Avarra by Palace" },
+    { id: "6BR-Apartment", price: 52199846, beds: 6, image: "https://res.cloudinary.com/dshowga6n/image/upload/v1771696803/property-research/Emaar%20Properties%20-%20Avarra%20by%20Palace/photo-5.webp", monthlyCharge: 18576, location: "Avarra by Palace" },
+  ],
 };
