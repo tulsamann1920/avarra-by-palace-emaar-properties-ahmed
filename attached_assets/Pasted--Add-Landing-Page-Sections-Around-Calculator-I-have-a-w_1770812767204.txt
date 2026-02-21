@@ -1,0 +1,67 @@
+# Add Landing Page Sections Around Calculator
+
+I have a working rent-vs-buy calculator that pulls from a config file. I want to turn this into a full landing page by adding sections before and after the calculator.
+
+Keep the existing calculator exactly as it is. Add these sections around it.
+
+---
+
+## SECTIONS TO ADD (in order)
+
+### 1. Hero (top of page)
+- Headline: "The Rent Vs Buy Calculator for {projectName}"
+- Subheadline: "We Can Launch It In 15 Mins"
+- Embedded YouTube video (URL from config)
+- Alert box below video: "Don't Skip The Video Above - I built something specifically for you. This isn't a template. It's ready to deploy."
+
+### 2. What I Made
+Three items showing what's included:
+- Custom Lead Magnet
+- Walkthrough Video  
+- 15-Min Setup Call
+
+### 3. Why This Will Work
+Text section explaining the problem with generic forms and unqualified leads. Personalize with {projectName}. This is the "pain" section before showing the solution.
+
+### 4. Credibility (before calculator)
+- Stats bar: 1,000+ Projects | $500M+ Property Value | 15 Developer Clients
+- Case study box for Furthmann Massivhaus (€7M+ sales, 20+ units, under 12 months)
+
+### 5. THE CALCULATOR (already built - keep as is)
+
+### 6. How It Works
+Four numbered steps explaining what happens when a buyer uses the calculator (they engage, spend 10 mins, self-qualify, then submit details)
+
+### 7. Book A Call CTA
+- Headline: "Everything Is Built. We Just Need 15 Minutes To Launch."
+- Calendly embed (hardcoded URL)
+
+### 8. FAQ
+Accordion or simple list with 6 questions about the free offer, what happens on the call, timeline, etc.
+
+### 9. About Me
+Photo + bio for Tulsa Mann, Founder of The Property Look. Include the main offer headline and social links. (All hardcoded - same for every prospect)
+
+### 10. Final CTA
+Simple closing section with Calendly link
+
+---
+
+## CONFIG ADDITION NEEDED
+
+Add to the existing config:
+
+```typescript
+walkthroughVideoUrl: "https://youtube.com/embed/XXXXX",
+```
+
+Everything else (Calendly, socials, bio, FAQ content, credibility stats) is hardcoded - same for all prospects.
+
+---
+
+## NOTES
+
+- Use the same design language as the existing calculator
+- Only {developerName}, {projectName}, {location}, and {walkthroughVideoUrl} change per prospect
+- Keep it clean and professional
+- Mobile responsive

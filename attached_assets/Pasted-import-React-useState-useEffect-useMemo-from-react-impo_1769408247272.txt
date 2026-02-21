@@ -1,0 +1,297 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { TrendingDown, TrendingUp, Home, ArrowRight, DollarSign, Clock, Info, ShieldCheck } from 'lucide-react';
+
+// Hard-coded PROJECT_DATA
+const PROJECT_DATA = [
+  { id: "Apt 201", price: 450000, beds: 1, image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=800", monthlyCharge: 150 },
+  { id: "Apt 405", price: 625000, beds: 2, image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800", monthlyCharge: 210 },
+  { id: "Penthouse B", price: 1200000, beds: 3, image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800", monthlyCharge: 450 },
+  { id: "Studio 12", price: 320000, beds: 1, image: "https://images.unsplash.com/photo-1536376074432-cd4258ae7eaa?auto=format&fit=crop&q=80&w=800", monthlyCharge: 120 },
+  { id: "Apt 802", price: 890000, beds: 2, image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=800", monthlyCharge: 320 }
+];
+
+const App = () => {
+  // --- State ---
+  const [rent, setRent] = useState(2500);
+  const [deposit, setDeposit] = useState(50000);
+  const [years, setYears] = useState(10);
+  const [activeProperty, setActiveProperty] = useState(PROJECT_DATA[0]);
+  const [isChanging, setIsChanging] = useState(false);
+
+  // --- Constants for Math ---
+  const INTEREST_RATE = 0.055; 
+  const MORTGAGE_TERM = 30; 
+  const RENT_INFLATION = 0.04; 
+  const PROPERTY_APPRECIATION = 0.03; 
+
+  // --- Financial Calculations ---
+  const stats = useMemo(() => {
+    let totalRentPaid = 0;
+    let currentMonthlyRent = rent;
+    for (let i = 0; i < years; i++) {
+      totalRentPaid += currentMonthlyRent * 12;
+      currentMonthlyRent *= (1 + RENT_INFLATION);
+    }
+
+    const calculateMonthlyMortgage = (price, dep) => {
+      const loan = price - dep;
+      const monthlyRate = INTEREST_RATE / 12;
+      const numPayments = MORTGAGE_TERM * 12;
+      if (loan <= 0) return 0;
+      return (loan * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+    };
+
+    const bestMatch = PROJECT_DATA.reduce((prev, curr) => {
+      const prevCost = calculateMonthlyMortgage(prev.price, deposit) + prev.monthlyCharge;
+      const currCost = calculateMonthlyMortgage(curr.price, deposit) + curr.monthlyCharge;
+      return Math.abs(currCost - rent) < Math.abs(prevCost - rent) ? curr : prev;
+    });
+
+    const futurePropertyValue = bestMatch.price * Math.pow(1 + PROPERTY_APPRECIATION, years);
+    const loanAmount = bestMatch.price - deposit;
+    const monthlyRate = INTEREST_RATE / 12;
+    const n = MORTGAGE_TERM * 12;
+    const p = years * 12;
+    const remainingBalance = loanAmount * (Math.pow(1 + monthlyRate, n) - Math.pow(1 + monthlyRate, p)) / (Math.pow(1 + monthlyRate, n) - 1);
+    
+    const equityGain = futurePropertyValue - remainingBalance;
+    const wealthGap = equityGain + totalRentPaid; 
+    const monthlyOwnershipCost = calculateMonthlyMortgage(bestMatch.price, deposit) + bestMatch.monthlyCharge;
+
+    return {
+      totalRentPaid,
+      equityGain,
+      wealthGap,
+      bestMatch,
+      monthlyOwnershipCost
+    };
+  }, [rent, deposit, years]);
+
+  useEffect(() => {
+    if (stats.bestMatch.id !== activeProperty.id) {
+      setIsChanging(true);
+      const timer = setTimeout(() => {
+        setActiveProperty(stats.bestMatch);
+        setIsChanging(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [stats.bestMatch, activeProperty.id]);
+
+  const formatCurrency = (val) => 
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+
+  return (
+    <div className="min-h-screen h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-emerald-500/30 overflow-hidden flex flex-col">
+      
+      {/* GLOBAL HEADER */}
+      <header className="h-16 md:h-20 border-b border-zinc-800 px-8 flex items-center justify-between bg-zinc-950 z-20">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+            <TrendingUp className="text-zinc-950" size={24} />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold tracking-tight leading-none">Wealth Gap Engine</h1>
+            <p className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mt-1">Property Equity Analyzer</p>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center gap-6 text-zinc-400">
+          <div className="flex items-center gap-2 text-xs font-semibold">
+            <ShieldCheck size={14} className="text-emerald-500" />
+            <span>2026 MARKET DATA SYNCED</span>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        {/* ZONE 1: THE INPUTS (Left 25%) */}
+        <section className="w-full md:w-1/4 h-full border-r border-zinc-800 p-8 flex flex-col justify-center gap-10 bg-zinc-900/30">
+          <div className="space-y-1">
+            <h2 className="text-emerald-500 text-[10px] font-black uppercase tracking-[0.25em]">Phase 01</h2>
+            <p className="text-xl font-medium text-white">Your Current Reality</p>
+            <p className="text-xs text-zinc-500">Adjust the sliders to match your current living situation.</p>
+          </div>
+
+          <div className="space-y-10">
+            {/* Rent Slider */}
+            <div className="space-y-4 group">
+              <div className="flex justify-between items-end">
+                <label className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Current Monthly Rent</label>
+                <span className="text-2xl font-mono text-white group-hover:text-emerald-400 transition-colors">{formatCurrency(rent)}</span>
+              </div>
+              <input 
+                type="range" min="1000" max="10000" step="100" 
+                value={rent} onChange={(e) => setRent(Number(e.target.value))}
+                className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+              />
+            </div>
+
+            {/* Deposit Slider */}
+            <div className="space-y-4 group">
+              <div className="flex justify-between items-end">
+                <label className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Your Savings / Deposit</label>
+                <span className="text-2xl font-mono text-white group-hover:text-emerald-400 transition-colors">{formatCurrency(deposit)}</span>
+              </div>
+              <input 
+                type="range" min="10000" max="500000" step="5000" 
+                value={deposit} onChange={(e) => setDeposit(Number(e.target.value))}
+                className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+              />
+            </div>
+
+            {/* Time Toggle */}
+            <div className="space-y-4">
+              <label className="text-xs text-zinc-400 font-bold uppercase tracking-wider block">Future Outlook</label>
+              <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-900 border border-zinc-800 rounded-xl">
+                <button 
+                  onClick={() => setYears(5)}
+                  className={`py-3 rounded-lg transition-all text-xs font-black tracking-widest uppercase ${years === 5 ? 'bg-zinc-800 text-emerald-400 shadow-xl border border-zinc-700' : 'text-zinc-600 hover:text-zinc-400'}`}
+                >5 Year Plan</button>
+                <button 
+                  onClick={() => setYears(10)}
+                  className={`py-3 rounded-lg transition-all text-xs font-black tracking-widest uppercase ${years === 10 ? 'bg-zinc-800 text-emerald-400 shadow-xl border border-zinc-700' : 'text-zinc-600 hover:text-zinc-400'}`}
+                >10 Year Plan</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-auto pt-6 border-t border-zinc-800/50 flex items-start gap-3">
+            <div className="p-1.5 bg-zinc-800 rounded-lg text-zinc-500 mt-0.5">
+                <Info size={14} />
+            </div>
+            <p className="text-[10px] text-zinc-500 leading-relaxed font-medium">
+              We assume rent rises by 4% annually while property values grow by 3%.
+            </p>
+          </div>
+        </section>
+
+        {/* ZONE 2: THE OPPORTUNITY (Center 40%) */}
+        <section className="w-full md:w-2/5 h-full p-12 flex flex-col items-center justify-center relative">
+          {/* Ambient Glow */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 blur-[120px] rounded-full"></div>
+          </div>
+
+          <div className="relative z-10 w-full max-w-md text-center">
+            <div className="mb-12">
+              <h2 className="text-zinc-500 text-[11px] font-black uppercase tracking-[0.4em] mb-4">The Opportunity Gap</h2>
+              <div className="text-7xl md:text-8xl font-black tracking-tighter text-white tabular-nums">
+                {formatCurrency(stats.wealthGap)}
+              </div>
+              <p className="text-zinc-400 text-sm mt-4 font-medium max-w-[280px] mx-auto">
+                The total financial difference between renting and buying this home over {years} years.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              {/* Rent Card */}
+              <div className="p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex items-center justify-between group overflow-hidden relative">
+                <div className="relative z-10">
+                  <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1">Wealth Lost</p>
+                  <p className="text-xl font-bold text-white tabular-nums">{formatCurrency(stats.totalRentPaid)}</p>
+                </div>
+                <div className="relative z-10 text-right">
+                    <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-1">Total Rent Paid</p>
+                    <p className="text-xs text-zinc-600">Non-recoverable cost</p>
+                </div>
+                <div className="absolute left-0 bottom-0 h-1 bg-red-500/30 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </div>
+
+              {/* Equity Card */}
+              <div className="p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex items-center justify-between group overflow-hidden relative">
+                <div className="relative z-10">
+                  <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Wealth Built</p>
+                  <p className="text-xl font-bold text-white tabular-nums">{formatCurrency(stats.equityGain)}</p>
+                </div>
+                <div className="relative z-10 text-right">
+                    <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-1">Projected Equity</p>
+                    <p className="text-xs text-zinc-600">Your future net worth</p>
+                </div>
+                <div className="absolute left-0 bottom-0 h-1 bg-emerald-500/30 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ZONE 3: THE MATCH (Right 35%) */}
+        <section className="w-full md:w-[35%] h-full bg-zinc-900/60 p-10 flex flex-col justify-center border-l border-zinc-800">
+          <div className="w-full max-w-sm space-y-8">
+            <div className="space-y-1">
+              <h2 className="text-emerald-500 text-[10px] font-black uppercase tracking-[0.25em] flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                Perfect Alternative
+              </h2>
+              <p className="text-xl font-medium text-white">Your Recommended Home</p>
+            </div>
+
+            <div className={`transition-all duration-500 ${isChanging ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+              <div className="relative group overflow-hidden rounded-[2.5rem] bg-zinc-800 aspect-[5/4] mb-8 shadow-2xl border border-white/5">
+                <img 
+                  src={activeProperty.image} 
+                  alt={activeProperty.id}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent"></div>
+                <div className="absolute bottom-8 left-8">
+                  <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">Unit ID</p>
+                  <h3 className="text-3xl font-bold text-white tracking-tight">{activeProperty.id}</h3>
+                </div>
+                <div className="absolute top-8 right-8 px-4 py-2 bg-zinc-950/90 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg">
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest">{activeProperty.beds} Bed Residence</span>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl bg-zinc-950/50 border border-white/5">
+                      <p className="text-zinc-500 text-[10px] uppercase font-black tracking-widest mb-1">Monthly Payment</p>
+                      <p className="text-xl font-mono text-white tracking-tighter">{formatCurrency(stats.monthlyOwnershipCost)}</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-zinc-950/50 border border-white/5 relative overflow-hidden group">
+                      <p className="text-zinc-500 text-[10px] uppercase font-black tracking-widest mb-1">vs. Your Rent</p>
+                      <p className={`text-xl font-mono tracking-tighter ${stats.monthlyOwnershipCost <= rent ? 'text-emerald-400' : 'text-zinc-300'}`}>
+                        {stats.monthlyOwnershipCost > rent ? '+' : '-'} {formatCurrency(Math.abs(stats.monthlyOwnershipCost - rent))}
+                      </p>
+                  </div>
+                </div>
+
+                <button className="w-full py-5 rounded-2xl bg-emerald-500 text-emerald-950 font-black uppercase tracking-widest text-xs hover:bg-emerald-400 active:scale-[0.98] transition-all shadow-[0_20px_40px_-10px_rgba(16,185,129,0.3)] flex items-center justify-center gap-3">
+                   Request Priority Access
+                   <ArrowRight size={16} />
+                </button>
+
+                <p className="text-center text-[11px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
+                  For {formatCurrency(Math.abs(stats.monthlyOwnershipCost - rent))} {stats.monthlyOwnershipCost > rent ? 'extra' : 'less'} per month, <br/>you own the asset.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <style>{`
+        input[type=range]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          height: 1.5rem;
+          width: 1.5rem;
+          border-radius: 8px;
+          background: #10b981;
+          cursor: pointer;
+          border: 4px solid #09090b;
+          box-shadow: 0 0 20px rgba(16,185,129,0.4);
+        }
+        input[type=range]::-moz-range-thumb {
+          height: 1.5rem;
+          width: 1.5rem;
+          border-radius: 8px;
+          background: #10b981;
+          cursor: pointer;
+          border: 4px solid #09090b;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default App;
